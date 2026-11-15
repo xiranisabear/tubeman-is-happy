@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 144"><defs><pattern id="stars" width="210" height="144" patternUnits="userSpaceOnUse">
+<g fill="none" stroke="#fff2d6" stroke-width="3" stroke-linecap="round" stroke-dasharray=".1 5" opacity=".87">
+<g transform="translate(51 58)"><polygon points="0,-40 10,-13 39,-12 16,6 24,34 0,18 -24,34 -16,6 -39,-12 -10,-13"/><path d="M-30 20 Q-63 41 -66 17 Q-65 3 -54 9 M30 20 Q63 41 66 17 Q65 3 54 9"/></g>
+<g transform="translate(156 130)"><polygon points="0,-40 10,-13 39,-12 16,6 24,34 0,18 -24,34 -16,6 -39,-12 -10,-13"/><path d="M-30 20 Q-63 41 -66 17 Q-65 3 -54 9 M30 20 Q63 41 66 17 Q65 3 54 9"/></g>
+<g transform="translate(156 -14)"><polygon points="0,-40 10,-13 39,-12 16,6 24,34 0,18 -24,34 -16,6 -39,-12 -10,-13"/><path d="M-30 20 Q-63 41 -66 17 Q-65 3 -54 9 M30 20 Q63 41 66 17 Q65 3 54 9"/></g>
+</g>
+<path fill="#fff3d8" opacity=".85" d="M155 45l2 10 9 2-9 2-2 10-2-10-9-2 9-2z M52 111l2 9 8 2-8 2-2 9-2-9-8-2 8-2z"/>
+</pattern></defs><rect width="210" height="144" fill="url(#stars)"/></svg>
