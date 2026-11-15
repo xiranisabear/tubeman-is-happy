@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tubeman Is Happy!</title>
+<link rel="icon" type="image/gif" href="assets/tubeman.gif">
+<link rel="apple-touch-icon" href="assets/marquee-still.png">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f8f2ed;color:#45364f;font:600 16px Poppins,system-ui,sans-serif}main{max-width:960px;margin:auto;padding:32px 20px 48px;text-align:center}h1{font:400 clamp(2rem,5vw,3.75rem) "Mystery Quest",fantasy;margin:0 0 14px}p{margin:10px auto 20px;max-width:530px;line-height:1.5}button{font:inherit;cursor:pointer;color:inherit}button:focus-visible{outline:3px solid #79439a;outline-offset:4px}button:disabled{opacity:.48;cursor:default}.primary,.secondary{padding:12px 22px;border-radius:10px;border:1px solid #765486;margin:8px}.primary{background:#674778;color:#fff}.secondary{background:#fff8f6}.entrance{padding:0;border:0;background:none;display:block;margin:auto;border-radius:18px;overflow:hidden;width:min(100%,490px)}.entrance img{display:block;width:100%}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px auto}.choice{padding:8px;border:2px solid transparent;border-radius:14px;background:#fffaf6;min-width:0}.choice[aria-pressed=true]{border-color:#79439a;background:#efe3f6}.choice span{display:block;padding:8px}.photo{position:relative;aspect-ratio:1;overflow:hidden;background:#e9e0e9;border-radius:8px}.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.preview{width:min(100%,400px);margin:16px auto}.capture{display:grid;grid-template-columns:2fr 1fr;gap:20px;max-width:650px;margin:auto;align-items:start}.capture .preview{width:100%;margin:0}.guide img{width:100%;border-radius:10px}.history{display:flex;justify-content:center;flex-wrap:wrap;gap:5px;margin:14px auto;max-width:420px}.history img{width:36px;border-radius:4px}progress{width:100%;accent-color:#80568d}small{display:block;margin:12px}.flash{animation:flash .22s}@keyframes flash{50%{filter:brightness(1.65)}}@media(max-width:620px){.grid{grid-template-columns:repeat(2,1fr)}}@media(prefers-reduced-motion:reduce){.flash{animation:none}}
+
+body.room::before{content:"";position:fixed;inset:0 0 23.5%;background:url(assets/booth-wallpaper.svg) center top/210px 144px repeat;pointer-events:none}
+body.room::after{content:"";position:fixed;inset:0 0 24%;pointer-events:none;background:linear-gradient(90deg,#e6ccd9,#fff0ec 27%,#f6dfeb 55%,#e5cedd 87%,transparent) left top/min(7vw,92px) 100% no-repeat,linear-gradient(270deg,#e6ccd9,#fff0ec 27%,#f6dfeb 55%,#e5cedd 87%,transparent) right top/min(7vw,92px) 100% no-repeat;clip-path:polygon(0 0,5.5% 0,4.5% 48%,2.8% 67%,0 82%,0 100%,100% 100%,100% 82%,97.2% 67%,95.5% 48%,94.5% 0,100% 0,100% 100%,0 100%)}
+body{--booth-width:min(82vw,49svh,500px)}
+body.room{background:url(assets/booth-rug.svg) center/max(100%,calc(var(--booth-width) * 2.85)) 100% no-repeat fixed,#cdb8d1 url(assets/booth-room-original.svg) center/100% 100% no-repeat fixed}
+.room main{min-height:100svh;display:grid;place-items:center;padding:4vh 16px 12vh}
+.booth{display:grid;grid-template-columns:44% 56%;grid-template-rows:16% 84%;width:var(--booth-width);aspect-ratio: .84;padding:0;border:6px solid #a9b9aa;border-radius:14px;background:#f6efe6;box-shadow:0 22px 26px #64476055;overflow:hidden;position:relative}
+.sign{grid-column:span 2;display:flex;align-items:center;justify-content:center;gap:5%;background:#f9cedf;border:5px solid #765780;text-align:left;color:#634075;font:bold clamp(11px,2.5vh,22px) monospace}
+.sign img{height:87%;flex:none;object-fit:contain}
+.ticker{overflow:hidden;width:69%;display:block;text-align:center}
+.line{display:block;white-space:nowrap;animation:marquee 7s linear infinite}
+@keyframes marquee{0%{transform:translateX(-108%)} 24%,58%{transform:translateX(0)} 86%,100%{transform:translateX(108%)}}
+.panel-art{position:relative;display:grid;place-items:center;background:linear-gradient(90deg,#e0d6cf,#fff9ef 14%,#f4eee5);color:#a783ae;font-size:clamp(22px,4vh,40px);border-right:3px solid #d6c8c5}
+.slot{position:absolute;top:55%;width:45%;height:3%;background:#473d48;border-bottom:5px solid #e8afc9;box-shadow:0 4px 4px #69456044}
+.door{background:linear-gradient(90deg,#504255,#78647c);position:relative;overflow:hidden;display:block}
+.seat{position:absolute;inset:77% 13% 4% 20%;background:linear-gradient(#b58abb,#89658f);border-radius:12px 12px 4px 4px}
+.curtain{position:absolute;inset:0 0 17% 8%;background:repeating-linear-gradient(93deg,#c4b7a8 0%,#f5eadd 4%,#fff9ef 8%,#d8cbbb 11%);border-bottom:4px dotted #a887ac;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,0 68%,0 34%);transition:clip-path .65s ease,background-position .65s ease}
+.booth:hover .curtain,.booth:focus-visible .curtain{clip-path:polygon(0 0,100% 0,100% 100%,25% 100%,12% 68%,3% 34%);background-position:10px 0}
+.door::after{content:'';position:absolute;inset:0 0 auto;height:7px;background:linear-gradient(#42344399,transparent);pointer-events:none}
+.booth{border-right:12px solid #a9b9aa;border-radius:9px 15px 6px 6px;box-shadow:inset -3px 0 3px #fff8,0 16px 20px #64476055}
+.stitch{position:absolute;width:85%;left:7.5%;height:16%;color:#8e789a;font:clamp(10px,2vh,18px) monospace;letter-spacing:.15em}
+.stitch.top{top:7%}.stitch.bottom{bottom:5%;width:70%;left:15%;transform:rotate(180deg)}
+.slot{border-bottom-width:6px;border-radius:2px;box-shadow:0 4px 5px #69456055}
+.still{display:none}
+@media(prefers-reduced-motion:reduce){.line{animation:none}.curtain{transition:none}.moving{display:none}.sign .still{display:block}}
+
+.room main{position:relative;z-index:1;display:block;padding:0;max-width:none;height:100svh}
+.booth{position:absolute;left:50%;translate:-50% 0}
+.booth{bottom:16%;width:var(--booth-width);box-shadow:0 6px 8px #64476066}
+@font-face{font-family:"Mystery Quest";src:url("assets/MysteryQuest-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
+.sign{gap:2%;font:400 2em/1.2 "Mystery Quest","Chalkboard SE","Marker Felt",fantasy}
+.ticker{width:78%;container-type:inline-size}
+.ticker .line{display:block;width:max-content;margin-inline:auto;animation:scroll-sign 8s linear infinite;text-align:center;font-size:inherit}
+.ticker .line span{flex:none;padding-inline-end:1em}
+@keyframes scroll-sign{0%{transform:translateX(100cqw)} 35%,60%{transform:translateX(0)} 100%{transform:translateX(-100cqw)}}
+.character{height:86%;aspect-ratio:1;background:url(assets/marquee-transparent.png) 0 center/2000% 100% no-repeat;animation:dance 2s steps(20,end) infinite}
+@keyframes dance{to{background-position:105.2631579% center}}
+.stitch{height:auto;aspect-ratio:1;background:url(assets/star-spiral-original.svg) center/cover no-repeat;mix-blend-mode:multiply;width:92%;left:4%;opacity:.9;mask-image:radial-gradient(ellipse at center,#000 57%,transparent 74%)}
+.curtain{clip-path:none;transition:transform .8s cubic-bezier(.25,.7,.3,1);inset:0 -6% 17% 6%}
+.booth:hover .curtain,.booth:focus-visible .curtain{clip-path:none;transform:translateX(15%);background-position:0 0}
+@media(prefers-reduced-motion:reduce){.line,.character{animation:none}.line{width:auto;white-space:normal}.curtain{transition:none}}
+
+body:not(.room){min-height:100svh;background:radial-gradient(ellipse at 50% 12%,#f5eaf3,#decfdf 85%)}
+.frame-picker h1{color:#654879;font-size:clamp(2rem,4.8vw,3.25rem)}
+.frame-picker .grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:510px;gap:14px;margin:20px auto 14px}
+.frame-picker .choice{background:#fff9f2;border-color:#e7d9e8}
+.frame-picker .choice[aria-pressed=true]{border-color:#79439a;background:#f5e2ef}
+.frame-picker .choice span{padding:6px 0 2px}
+
+.primary{background:linear-gradient(#ffe7f1,#f5bcd7);color:#55325f;border:3px solid #795882;border-radius:7px;box-shadow:inset 0 0 9px #fff9,0 3px 0 #593963;font:600 1.1rem Poppins,system-ui,sans-serif}
+.primary:hover:not(:disabled){background:linear-gradient(#fff0f8,#f9c9e0)}
+.primary:active:not(:disabled){transform:translateY(2px);box-shadow:inset 0 0 9px #fff9,0 1px 0 #593963}
+.secondary{background:#fff8ef;color:#55325f;border:2px solid #997ba2;border-radius:7px;font:600 1.1rem Poppins,system-ui,sans-serif}
+.primary::before{content:"";display:inline-block;width:15px;height:15px;margin-right:7px;background:currentColor;vertical-align:-1px;clip-path:polygon(40% 0,60% 0,60% 35%,100% 35%,100% 55%,75% 55%,75% 75%,85% 75%,85% 100%,65% 100%,65% 80%,35% 80%,35% 100%,15% 100%,15% 75%,25% 75%,25% 55%,0 55%,0 35%,40% 35%)}
+@font-face{font-family:Poppins;src:url("assets/Poppins-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
+.choice{transition:transform .18s ease,box-shadow .18s ease}
+@media(hover:hover){.choice:hover{transform:translateY(-4px);box-shadow:0 8px 16px #59396330}}
+.choice:focus-visible{box-shadow:0 8px 16px #59396330}
+@media(prefers-reduced-motion:reduce){.choice{transition:none}.choice:hover{transform:none}}
+
+h1::before,h1::after{content:"";display:inline-block;width:.38em;height:.38em;margin:0 .35em;vertical-align:.15em;background:#805897;clip-path:polygon(50% 0,64% 33%,100% 38%,74% 63%,81% 100%,50% 82%,19% 100%,26% 63%,0 38%,36% 33%);animation:twinkle 2s ease-in-out infinite alternate}
+h1::after{animation-delay:-1s}
+@keyframes twinkle{from{transform:translateY(5px) rotate(-22deg) scale(.75);opacity:.65}to{transform:translateY(-8px) rotate(24deg) scale(1.1);opacity:1}}
+@media(prefers-reduced-motion:reduce){h1::before,h1::after{animation:none}}
+.capture{max-width:740px;grid-template-columns:minmax(0,1.55fr) minmax(0,.92fr);gap:14px;align-items:stretch;padding:14px;background:#fff8f3;border:1px solid #e4d0e4;border-radius:18px}
+.capture .guide{display:grid;grid-template-columns:minmax(0,1fr);align-content:center;gap:8px;background:#f1e5f2;border-radius:12px;padding:10px}
+.capture .guide p{margin:0}.capture .guide button{margin:0;padding-inline:8px}
+.capture-history{max-width:740px;margin:14px auto 0;padding:10px;background:#f1e5f2;border-radius:10px;text-align:left}
+.capture-history .history{display:grid;grid-template-columns:repeat(18,minmax(0,1fr));gap:4px;max-width:none;margin:6px 0 0}
+.capture-history .history span{aspect-ratio:1;background:#e3d3e7;border-radius:3px;overflow:hidden}
+.capture-history .history img{width:100%;display:block}
+@media(max-width:620px){
+  main h1, main.frame-picker h1 {
+    font-size:clamp(1rem,6.1vw,2.15rem);
+    text-align:center;
+    white-space:nowrap;
+  }
+  h1::before,h1::after{margin-inline:.22em}
+  .capture{grid-template-columns:minmax(0,1fr);gap:10px;padding:12px}
+  .capture .guide{padding:0;background:transparent;gap:8px}
+  .capture .guide #pose-guide{height:clamp(140px,46vw,230px);object-fit:contain;background:#dfb8b6}
+  .capture .guide button{min-height:44px}
+  .capture-history .history{grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+}
+
+.booth.printing{opacity:1;cursor:default}
+.print-window{position:absolute;top:56%;left:27.5%;width:45%;overflow:hidden;perspective:220px}
+.print-window .photo{display:block;border:4px solid #fff9f4;border-bottom-width:8px;border-radius:2px;animation:print-feed 3.4s .2s both cubic-bezier(.38,0,.45,1)}
+@keyframes print-feed{from{transform:translateY(-103%) rotateX(-12deg)}to{transform:translateY(0)}}
+.print-status{position:absolute;top:1%;left:50%;translate:-50% 0;background:#fff8f3;padding:6px 18px;border-radius:20px;white-space:nowrap}
+
+#camera-status{text-wrap:balance}
+.pose-timer{width:100%;padding:9px;background:#fff8f3;border-radius:9px;color:#563465;font-size:.82rem}
+#timer-label{display:block;min-block-size:1.5em;white-space:nowrap}
+#countdown{display:block;min-block-size:1.15em;font:bold 2rem/1.15 Poppins,system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.capture-history progress{display:block;margin-block:6px 10px}
+.capture .guide #cancel{margin-top:3px}
+
+.dance-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:530px;padding:0;margin:18px auto;list-style:none}
+.dance-steps li{display:grid;align-content:center;gap:4px;padding:10px 6px;border:1px solid #c9b1cb;border-radius:12px;background:#fff1f7;color:#503c59;animation:step-arrive .35s ease-out both}
+.dance-steps li:nth-child(2){background:#f5efff;animation-delay:.08s}
+.dance-steps li:nth-child(3){background:#edf7ee;animation-delay:.16s}
+.dance-steps strong{font-size:clamp(.86rem,2.4vw,1.15rem);font-weight:700;color:#623b75}
+.dance-steps span{font-size:.8rem;font-weight:400;line-height:1.35}
+@keyframes step-arrive{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.dance-steps li{animation:none}}
+
+.capture .guide #pose-guide,.capture .guide .pose-timer,.capture .guide button{width:100%;max-width:none}
+#pose-label{font:400 1.65em "Mystery Quest",fantasy}
+
+.enter-invite{position:absolute;z-index:2;left:50%;bottom:calc(16% + var(--booth-width) / .84 + 10px);translate:-50% 0;margin:0;white-space:nowrap}
+@media(prefers-reduced-motion:no-preference){.enter-invite{animation:invite-bob 2s ease-in-out infinite alternate}}
+@keyframes invite-bob{from{translate:-50% 0}to{translate:-50% -6px}}
+.enter-invite:is(:hover,:focus-visible) + .booth .curtain{transform:translateX(15%);clip-path:none}
+@media(prefers-reduced-motion:reduce){.ticker .line{animation:none;width:auto;justify-content:center}.ticker .line span{padding:0}.ticker .line [aria-hidden]{display:none}}
+.music-toggle{position:absolute;top:12px;right:12px;z-index:3}
+.music-toggle{width:48px;height:48px;padding:0;font:700 1.8rem system-ui,sans-serif}
+.music-toggle span{display:inline-block}
+.music-toggle[aria-pressed=true]{background:#ffd5e9}
+@media(prefers-reduced-motion:no-preference){.music-toggle[aria-pressed=true] span{animation:note-sway .85s ease-in-out infinite alternate}}
+@keyframes note-sway{from{transform:rotate(-14deg) translateY(1px)}to{transform:rotate(14deg) translateY(-3px)}}
+.music-toggle,.music-toggle[aria-pressed=true]{background:none;border:0;box-shadow:none;width:60px;height:64px;color:#654879}
+.music-toggle .clef{position:relative;display:inline-block;font:52px/1 "Bravura","Apple Symbols","Segoe UI Symbol",serif}
+.clef i,.clef b{position:absolute;font:10px/1 system-ui;color:#ead9ee;left:44%;top:22%}
+.clef b{left:53%;top:65%;color:#c4dcc9}
+.music-toggle[aria-pressed=true]{color:#554067}
+.pose-timer{position:relative}
+.pose-timer.is-complete #timer-label{position:absolute;inset:0;display:grid;place-items:center;text-align:center;white-space:normal;padding:6px}
+.pose-timer.is-complete #countdown{visibility:hidden}
+.pose-timer.is-complete::before{content:"";display:block;min-block-size:1.5em}
+.photo video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.gif-download:not([hidden]){display:inline-block;text-decoration:none}
+.gif-download:focus-visible{outline:3px solid #79439a;outline-offset:4px}
+#camera-status:empty{display:none}
+</style>
+<main id="app" tabindex="-1"></main>
+<script src="gif.js"></script>
+<script src="gif-overlays.js"></script>
+<script>
+const app = document.getElementById('app');
+const names = ['Berry Pop','Clover Soda','Cookie Cloud','Lilac Picnic'];
+const faces = ['(˶ᵔ ᵕ ᵔ˶)','(ﾉ◕ヮ◕)ﾉ','(ᵔᴥᵔ)','(✿◠‿◠)'];
+const asset = name => 'assets/' + name + '.png';
+const pose = index => asset('pose-' + String(index).padStart(2,'0'));
+let selected = null;
+let shot = 0;
+let cameraStream;
+let cameraRequest = 0;
+let capturedPhotos = [];
+
+function stopCamera() {
+  cameraRequest++;
+  cameraStream?.getTracks().forEach(track => track.stop());
+  cameraStream = undefined;
+}
+
+if (typeof window !== 'undefined') window.addEventListener('pagehide', stopCamera);
+
+function cameraPreview(frame) {
+  return `<div class="photo preview"><video id="camera-preview" autoplay muted playsinline aria-label="Live camera preview"></video><img src="${asset('frame-0' + (frame + 1))}" alt=""></div>`;
+}
+
+function attachCamera() {
+  const video = document.getElementById('camera-preview');
+  video.srcObject = cameraStream;
+  return video;
+}
+
+function takePhoto(video) {
+  if (video.readyState < 2 || !video.videoWidth || !video.videoHeight) throw new Error('Camera frame unavailable');
+  const side = Math.min(video.videoWidth, video.videoHeight);
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 1000;
+  const context = canvas.getContext('2d');
+  context.translate(1000, 0);
+  context.scale(-1, 1);
+  context.drawImage(video, (video.videoWidth - side) / 2, (video.videoHeight - side) / 2, side, side, 0, 0, 1000, 1000);
+  return canvas.toDataURL('image/jpeg', 0.88);
+}
+let countdownTimer;
+let roomMusic;
+let audioContext;
+
+function enableCountdownAudio() {
+  if (typeof AudioContext === 'undefined') return;
+  try {
+    audioContext ??= new AudioContext();
+    audioContext.resume().catch(() => {});
+  } catch {}
+}
+
+function printerSound() {
+  if (audioContext?.state !== 'running') return;
+  const duration = 3.4;
+  const rate = audioContext.sampleRate;
+  const buffer = audioContext.createBuffer(1, Math.round(rate * duration), rate);
+  const samples = buffer.getChannelData(0);
+  for (let i = 0; i < samples.length; i++) {
+    const time = i / rate;
+    const envelope = Math.min(1, time / 0.08, (duration - time) / 0.24);
+    const pulse = 0.4 + 0.6 * Math.pow(Math.sin(Math.PI * 7 * time), 4);
+    const motor = Math.sin(2 * Math.PI * 145 * time + 1.3 * Math.sin(2 * Math.PI * 7 * time));
+    samples[i] = envelope * pulse * (0.025 * motor + 0.038 * (Math.random() * 2 - 1));
+  }
+  const source = audioContext.createBufferSource();
+  source.buffer = buffer;
+  source.connect(audioContext.destination);
+  source.start();
+}
+
+function shutterSnap() {
+  if (audioContext?.state !== 'running') return;
+  const rate = audioContext.sampleRate;
+  const buffer = audioContext.createBuffer(1, Math.round(rate * 0.085), rate);
+  const samples = buffer.getChannelData(0);
+  for (let i = 0; i < samples.length; i++) {
+    const t = i / rate;
+    const firstClick = Math.exp(-t * 180);
+    const secondClick = t >= 0.028 ? 0.5 * Math.exp(-(t - 0.028) * 210) : 0;
+    samples[i] = (Math.random() * 2 - 1) * (firstClick + secondClick) * 0.32;
+  }
+  const shutter = audioContext.createBufferSource();
+  shutter.buffer = buffer;
+  shutter.connect(audioContext.destination);
+  shutter.start();
+}
+
+function countdownChime(seconds) {
+  if (audioContext?.state !== 'running') return;
+  const now = audioContext.currentTime;
+  const tone = audioContext.createOscillator();
+  const volume = audioContext.createGain();
+  tone.frequency.value = seconds === 1 ? 880 : 660;
+  volume.gain.setValueAtTime(0.001, now);
+  volume.gain.exponentialRampToValueAtTime(0.085, now + 0.012);
+  volume.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+  tone.connect(volume).connect(audioContext.destination);
+  tone.start(now);
+  tone.stop(now + 0.17);
+}
+
+function photo(frame, extra = '', source = asset('empty-preview')) {
+  return `<div class="photo ${extra}"><img src="${source}" alt="Framed photo"><img src="${asset('frame-0' + (frame + 1))}" alt=""></div>`;
+}
+
+function screen(title, body) {
+  clearTimeout(countdownTimer);
+  roomMusic?.pause();
+  document.body.classList.remove('room');
+  document.body.classList.remove('frame-picker');
+  app.innerHTML = `<h1 tabindex="-1">${title}</h1>${body}`;
+  app.querySelector('h1').focus();
+}
+
+function bind(id, handler) {
+  document.getElementById(id).onclick = handler;
+}
+
+function entrance(playMusic = true) {
+  document.body.classList.add('room');
+  app.innerHTML = `<button class="secondary music-toggle" id="music" aria-pressed="false" aria-label="Entrance music" title="Play music"><span class="clef" aria-hidden="true">𝄞<i>✦</i><b>✧</b></span></button>
+  <button class="primary enter-invite" id="enter-invite">Enter the booth</button>
+  <button class="booth" id="enter" aria-label="Tubeman Is Happy! Enter the booth">
+    <span class="sign"><span class="ticker"><span class="line">Tubeman Is Happy!</span></span><span class="character" aria-hidden="true"></span></span>
+    <span class="panel-art" aria-hidden="true"><span class="stitch top"></span><span class="stitch bottom"></span><span class="slot"></span></span>
+    <span class="door" aria-hidden="true"><span class="seat"></span><span class="curtain"></span></span>
+  </button>`;
+  const musicButton = document.getElementById('music');
+  if (typeof Audio !== 'undefined') {
+    roomMusic ??= new Audio('assets/booth-music-original.wav');
+    roomMusic.loop = true;
+    roomMusic.volume = 0.32;
+    const syncMusic = () => {
+      musicButton.title = roomMusic.paused ? 'Play music' : 'Pause music';
+      musicButton.setAttribute('aria-pressed', String(!roomMusic.paused));
+    };
+    bind('music', async () => {
+      if (roomMusic.paused) await roomMusic.play().catch(() => {});
+      else roomMusic.pause();
+      syncMusic();
+    });
+    if (playMusic) roomMusic.play().then(syncMusic, syncMusic);
+  }
+  bind('enter', frames);
+  bind('enter-invite', frames);
+  app.focus({preventScroll:true});
+}
+
+function frames() {
+  screen('Choose your frame', `<div class="grid" aria-label="Frame choices">${names.map((name,index) =>
+    `<button class="choice" aria-pressed="${index === selected}" data-index="${index}">${photo(index)}<span>${name} <bdi aria-hidden="true">${faces[index]}</bdi></span></button>`).join('')}</div>
+    <button id="back" class="secondary">Back</button><button id="continue" class="primary" ${selected === null ? 'disabled' : ''}>Continue</button>`);
+  document.body.classList.add('frame-picker');
+  for (const button of app.querySelectorAll('.choice')) {
+    button.onclick = () => {
+      selected = Number(button.dataset.index);
+      for (const choice of app.querySelectorAll('.choice')) {
+        choice.setAttribute('aria-pressed', String(choice === button));
+      }
+      document.getElementById('continue').disabled = false;
+    };
+  }
+  bind('back', () => entrance());
+  bind('continue', () => setup());
+}
+
+function setup(message = '') {
+  stopCamera();
+  capturedPhotos = [];
+  screen('Get ready to dance', `<ol class="dance-steps" aria-label="How the photo booth works">
+      <li><strong>3 seconds</strong><span>Get ready</span></li>
+      <li><strong>18 poses</strong><span>Copy Tubeman</span></li>
+      <li><strong>Every 2 seconds</strong><span>The booth snaps a photo</span></li>
+    </ol><div id="setup-preview">${photo(selected,'preview')}</div>
+    <p id="camera-status" role="status"></p>
+    <button id="back" class="secondary">Back</button><button id="camera" class="primary">Enable camera</button><button id="dance" class="primary" hidden>Start Dancing</button>`);
+  const status = document.getElementById('camera-status');
+  status.textContent = message;
+  bind('back', () => { stopCamera(); frames(); });
+  bind('dance', () => {
+    shot = 0;
+    enableCountdownAudio();
+    capture(true);
+  });
+  bind('camera', async () => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setup('Camera access needs a supported browser on localhost or HTTPS.');
+      return;
+    }
+    const request = ++cameraRequest;
+    const button = document.getElementById('camera');
+    button.disabled = true;
+    status.textContent = 'Waiting for camera permission…';
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({video: {width: {ideal: 1280}, height: {ideal: 720}}, audio: false});
+      if (request !== cameraRequest) {
+        stream.getTracks().forEach(track => track.stop());
+        return;
+      }
+      cameraStream = stream;
+      for (const track of stream.getVideoTracks()) {
+        track.addEventListener('ended', () => {
+          if (cameraStream === stream) setup('The camera disconnected. Enable it to start a new session.');
+        }, {once: true});
+      }
+      document.getElementById('setup-preview').innerHTML = cameraPreview(selected);
+      await attachCamera().play();
+      if (request !== cameraRequest) return;
+      status.textContent = 'Camera ready. Keep your face and hands in frame.';
+      button.hidden = true;
+      document.getElementById('dance').hidden = false;
+    } catch (error) {
+      if (request !== cameraRequest) return;
+      const messages = {
+        NotAllowedError: 'Camera access was denied. Allow access in your browser and try again.',
+        NotFoundError: 'No camera was found. Connect one and try again.'
+      };
+      setup(messages[error.name] || 'Could not start the camera. Check that it is available and try again.');
+    }
+  });
+}
+
+function capture(live = false) {
+  screen('Follow Tubeman and pose', `<div class="capture">${live ? cameraPreview(selected) : photo(selected,'preview')}
+    <div class="guide">
+      <p id="pose-label">Get ready</p>
+      <img id="pose-guide" src="${pose(1)}" alt="Tubeman pose 1">
+      <p class="pose-timer" role="status"><span id="timer-label">Starting in</span><strong id="countdown"></strong></p>
+      <button id="pause" class="primary">Pause</button>
+      <button id="cancel" class="secondary">${live ? 'Cancel session' : 'Cancel demo'}</button>
+    </div></div>
+    <div class="capture-history"><span id="capture-count">0 of 18 captured</span>
+      <progress id="capture-progress" aria-label="Photos captured" value="0" max="18"></progress>
+      <div class="history" aria-hidden="true">${Array.from({length:18}, (_, index) =>
+        `<span id="shot-${index}"></span>`).join('')}</div>
+    </div>`);
+  bind('cancel', () => setup());
+  const video = live ? attachCamera() : null;
+  video?.play().catch(() => {
+    if (video.srcObject === cameraStream) setup('Could not continue the camera preview. Please try again.');
+  });
+  const countdown = document.getElementById('countdown');
+  const label = document.getElementById('pose-label');
+  const guide = document.getElementById('pose-guide');
+  const preview = app.querySelector('.photo');
+  preview.addEventListener('animationend', () => preview.classList.remove('flash'));
+
+  const pause = document.getElementById('pause');
+  const timerLabel = document.getElementById('timer-label');
+  let pendingTick;
+  let timeLeft;
+  let deadline;
+  let activeMessage;
+  let paused = false;
+
+  function scheduleTick() {
+    deadline = performance.now() + timeLeft;
+    countdownTimer = setTimeout(pendingTick, timeLeft);
+  }
+
+  bind('pause', () => {
+    paused = !paused;
+    pause.textContent = paused ? 'Resume' : 'Pause';
+    timerLabel.textContent = paused ? 'Paused' : activeMessage;
+    if (paused) {
+      clearTimeout(countdownTimer);
+      timeLeft = Math.max(0, deadline - performance.now());
+    } else {
+      scheduleTick();
+    }
+  });
+
+  function countDown(seconds, message, done) {
+    activeMessage = message;
+    timerLabel.textContent = message;
+    countdown.textContent = `${seconds} s`;
+    countdownChime(seconds);
+    timeLeft = 1000;
+    pendingTick = () => {
+      if (seconds === 1) done();
+      else countDown(seconds - 1, message, done);
+    };
+    scheduleTick();
+  }
+
+  function nextPose() {
+    label.textContent = `Pose ${shot + 1} / 18`;
+    guide.src = pose(shot + 1);
+    guide.alt = `Tubeman pose ${shot + 1}`;
+    countDown(2, 'Next shot in', () => {
+      let source = asset('empty-preview');
+      if (live) {
+        try {
+          source = takePhoto(video);
+          capturedPhotos.push(source);
+        } catch {
+          setup('The camera stopped supplying photos. Enable it and start a new session.');
+          return;
+        }
+      }
+      document.getElementById('shot-' + shot).innerHTML = `<img src="${source}" alt="">`;
+      shot++;
+      document.getElementById('capture-progress').value = shot;
+      document.getElementById('capture-count').textContent = `${shot} of 18 captured`;
+      shutterSnap();
+      preview.classList.add('flash');
+      if (shot === 18) {
+        if (live) {
+          video.insertAdjacentHTML('beforebegin', `<img src="${capturedPhotos.at(-1)}" alt="Final captured photo">`);
+          video.remove();
+          stopCamera();
+        }
+        pause.disabled = true;
+        document.getElementById('timer-label').textContent = 'All shots captured';
+        app.querySelector('.pose-timer').classList.add('is-complete');
+        countdown.textContent = '';
+        countdownTimer = setTimeout(printKeepsake, 2000);
+      } else {
+        nextPose();
+      }
+    });
+  }
+
+  countDown(3, 'Starting in', nextPose);
+}
+
+function printKeepsake() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    reveal();
+    return;
+  }
+  entrance(false);
+  const booth = document.getElementById('enter');
+  document.getElementById('enter-invite').hidden = true;
+  document.getElementById('music').hidden = true;
+  booth.classList.add('printing');
+  booth.disabled = true;
+  booth.setAttribute('aria-label', 'Photo booth');
+  booth.querySelector('.panel-art').insertAdjacentHTML(
+    'beforeend', `<span class="print-window">${photo(selected, '', capturedPhotos.at(-1)).replace("<div", "<span").replace("</div>", "</span>")}</span>`
+  );
+  app.insertAdjacentHTML('afterbegin', '<p class="print-status" role="status">Printing your photo…</p>');
+  const print = booth.querySelector('.print-window .photo');
+
+  print.addEventListener('animationstart', printerSound, {once: true});
+  print.addEventListener('animationend', () => {
+    const start = print.getBoundingClientRect();
+    reveal();
+    const preview = app.querySelector('.preview');
+    const end = preview.getBoundingClientRect();
+    preview.animate([
+      {transformOrigin: 'top left', transform: `translate(${start.left - end.left}px, ${start.top - end.top}px) scale(${start.width / end.width})`},
+      {transformOrigin: 'top left', transform: 'none'}
+    ], {duration: 900, easing: 'cubic-bezier(.2,.72,.24,1)'});
+  }, {once: true});
+}
+
+let gifUrl;
+let videoUrl;
+
+function releaseGif() {
+  if (gifUrl) URL.revokeObjectURL(gifUrl);
+  gifUrl = undefined;
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('pagehide', event => {
+    if (!event.persisted) {
+      releaseGif();
+      releaseVideo();
+    }
+  });
+}
+
+function loadGifImage(source) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = source;
+  });
+}
+
+async function renderGif(photos, frame, status, preview, download, retry) {
+  const size = 480;
+  retry.hidden = true;
+  status.textContent = 'Preparing your GIF…';
+  try {
+    // Inline image data keeps canvas pixel access available when opened from disk.
+    const overlay = await loadGifImage(gifOverlays[frame]);
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = size;
+    const context = canvas.getContext('2d', {willReadFrequently: true});
+    const encoder = createGifEncoder(size);
+
+    for (let i = 0; i < photos.length; i++) {
+      const image = await loadGifImage(photos[i]);
+      if (!preview.isConnected) return;
+      context.drawImage(image, 0, 0, size, size);
+      context.drawImage(overlay, 0, 0, size, size);
+      encoder.addFrame(context.getImageData(0, 0, size, size).data);
+      status.textContent = `Making your GIF · ${i + 1} / ${photos.length}`;
+      await new Promise(resolve => requestAnimationFrame(resolve));
+    }
+
+    if (!preview.isConnected) return;
+    releaseGif();
+    gifUrl = URL.createObjectURL(encoder.finish());
+    const animation = await loadGifImage(gifUrl);
+    if (!preview.isConnected) return;
+    animation.alt = 'Your looping Tubeman animation';
+    preview.replaceChildren(animation);
+    download.href = gifUrl;
+    download.hidden = false;
+    status.textContent = 'Your GIF is ready.';
+  } catch {
+    if (!preview.isConnected) return;
+    releaseGif();
+    status.textContent = 'Could not create your GIF. You can retry with these photos.';
+    retry.hidden = false;
+  }
+}
+
+function releaseVideo() {
+  if (videoUrl) URL.revokeObjectURL(videoUrl);
+  videoUrl = undefined;
+}
+
+async function prepareVideo(photos, frame, button, link, status) {
+  button.disabled = true;
+  status.textContent = 'Preparing your video…';
+  let stream;
+  let recorder;
+  try {
+    const canvas = document.createElement('canvas');
+    if (typeof MediaRecorder === 'undefined' || !canvas.captureStream) {
+      throw new Error('Video export is unavailable in this browser.');
+    }
+    const mimeType = ['video/mp4', 'video/webm;codecs=vp8', 'video/webm']
+      .find(type => MediaRecorder.isTypeSupported(type));
+    if (!mimeType) throw new Error('Video export is unavailable in this browser.');
+
+    const [overlay, ...images] = await Promise.all([
+      loadGifImage(gifOverlays[frame]), ...photos.map(loadGifImage)
+    ]);
+    if (!button.isConnected) return;
+    const size = 480;
+    canvas.width = canvas.height = size;
+    const context = canvas.getContext('2d');
+    stream = canvas.captureStream(30);
+    recorder = new MediaRecorder(stream, {mimeType});
+    const chunks = [];
+    const finished = new Promise((resolve, reject) => {
+      recorder.ondataavailable = event => {
+        if (event.data.size) chunks.push(event.data);
+      };
+      recorder.onstop = () => resolve(new Blob(chunks, {type: recorder.mimeType || mimeType}));
+      recorder.onerror = () => reject(new Error('The browser could not record the video.'));
+    });
+    function draw(image) {
+      context.drawImage(image, 0, 0, size, size);
+      context.drawImage(overlay, 0, 0, size, size);
+    }
+    draw(images[0]);
+    recorder.start();
+    const recordFrames = async () => {
+      for (const image of images) {
+        if (!button.isConnected || recorder.state !== 'recording') break;
+        draw(image);
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      if (recorder.state !== 'inactive') recorder.stop();
+    };
+    const [video] = await Promise.all([finished, recordFrames()]);
+    if (!button.isConnected) return;
+    if (!video.size) throw new Error('The browser produced an empty video.');
+    releaseVideo();
+    videoUrl = URL.createObjectURL(video);
+    link.href = videoUrl;
+    link.download = 'tubeman-is-happy.' + (video.type.startsWith('video/mp4') ? 'mp4' : 'webm');
+    link.hidden = false;
+    button.hidden = true;
+    status.textContent = 'Your video is ready.';
+    link.click();
+  } catch (error) {
+    if (button.isConnected) status.textContent = error.message || 'Could not create your video. Try again.';
+  } finally {
+    if (recorder && recorder.state !== 'inactive') recorder.stop();
+    stream?.getTracks().forEach(track => track.stop());
+    button.disabled = false;
+  }
+}
+
+function reveal() {
+  const live = capturedPhotos.length === 18;
+  screen('Here’s a little happiness!', `<p>${live ? 'Captured with' : 'Sample result with'} the ${names[selected]} frame.</p>${photo(selected,'preview',capturedPhotos.at(-1))}
+    ${live ? '<p id="gif-status" role="status"></p><a id="download-gif" class="primary gif-download" download="tubeman-is-happy.gif" hidden>Download GIF</a><button id="retry-gif" class="secondary" hidden>Retry GIF</button><button id="make-video" class="primary">Download Video</button><a id="save-video" class="primary gif-download" hidden>Save Video</a><p id="video-status" role="status"></p>' : ''}
+    <button id="again" class="primary">Try Again</button>`);
+  bind('again', () => {
+    releaseGif();
+    releaseVideo();
+    selected = null;
+    shot = 0;
+    capturedPhotos = [];
+    frames();
+  });
+  if (live) {
+    const generate = () => renderGif(capturedPhotos, selected, document.getElementById('gif-status'),
+      app.querySelector('.preview'), document.getElementById('download-gif'), document.getElementById('retry-gif'));
+    bind('retry-gif', generate);
+    bind('make-video', () => prepareVideo(capturedPhotos, selected, document.getElementById('make-video'),
+      document.getElementById('save-video'), document.getElementById('video-status')));
+    generate();
+  }
+}
+
+entrance();
+</script>
+</html>
